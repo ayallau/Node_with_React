@@ -112,3 +112,6 @@ Thumbs.db
 # Logs
 logs
 *.log
+
+# my personal ignores
+keys.js

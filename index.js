@@ -5,11 +5,22 @@ import "./services/passport.js";
 //require('./services/passport'); // Old way
 import authRoutes from "./routes/authRoutes.js"; // Add this import
 import mongoose from "mongoose";
+import cookieSession from "cookie-session";
+import passport from "passport";
 import keys from "./config/keys.js";
 
 mongoose.connect(keys.mongoURI);
 
 const app = express();
+
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    keys: [keys.cookieKey], // Use the imported cookieKey.
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/", (_req, res) => {
   res.send("Welcome to the server!");

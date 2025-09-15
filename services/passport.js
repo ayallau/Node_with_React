@@ -19,14 +19,15 @@ passport.use(
       User.findOne({ googleId: profile.id })
         .then((existingUser) => {
           if (existingUser) {
-            log(existingUser);
+            return existingUser;
           } else {
-            new User({ googleId: profile.id }).save().then((user) => {
-              log(user);
+            return new User({ googleId: profile.id }).save().then((user) => {
+              return user;
             });
           }
         })
         .then((user) => {
+          log(user);
           done(null, user);
         })
         .catch((err) => done(err, null));

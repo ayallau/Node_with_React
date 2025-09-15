@@ -15,10 +15,21 @@ passport.use(
       clientSecret: keys.googleClientSecret,
       callbackURL: "/auth/google/callback",
     },
-    (accessToken, refreshToken, profile) => {
-      new User({ googleId: profile.id }).save().then((user) => {
-        log(user);
-      });
+    (accessToken, refreshToken, profile, done) => {
+      User.findOne({ googleId: profile.id })
+        .then((existingUser) => {
+          if (existingUser) {
+            log(existingUser);
+          } else {
+            new User({ googleId: profile.id }).save().then((user) => {
+              log(user);
+            });
+          }
+        })
+        .then((user) => {
+          done(null, user);
+        })
+        .catch((err) => done(err, null));
     },
   ),
 );

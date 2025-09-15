@@ -3,6 +3,10 @@ import passport from "passport";
 //const GoogleStrategy = require('passport-google-oauth20').Strategy; // Old way
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import keys from "../config/keys.js";
+import mongoose from "mongoose";
+import { log } from "console";
+
+const User = mongoose.model("users");
 
 passport.use(
   new GoogleStrategy(
@@ -11,13 +15,10 @@ passport.use(
       clientSecret: keys.googleClientSecret,
       callbackURL: "/auth/google/callback",
     },
-    (accessToken, refreshToken, profile, done) => {
-      console.log("accessToken:", accessToken);
-      console.log("refreshToken:", refreshToken);
-      console.log("profile:", profile);
-      // Here, you would typically find or create a user in your database
-      // For this example, we'll just return the profile object
-      console.log("done:", done);
+    (accessToken, refreshToken, profile) => {
+      new User({ googleId: profile.id }).save().then((user) => {
+        log(user);
+      });
     },
   ),
 );
